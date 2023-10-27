@@ -1,0 +1,37 @@
+FROM scratch
+
+# Name of the OCI artifact
+LABEL name=git
+# This label is used to identify the product owner.
+LABEL vendor=ZOSOpen
+# This label depicts the product version in the OCI artifact.
+# The supported format is version.release.mod.fix where each are positive numerics
+LABEL version="2.41.0.0"
+# This label is used to identify the specific build for this OCI artifact
+LABEL release=1023
+# This label is used to identify whether the software is licensed with supported or licensed with unsupported.
+# Product installation directory is decided based on this value.
+# Example:
+#   If vendor=ZOSOpen, OCI artifact tag is git:2.41.0.0, and community_unsupported=true, then installation directory will be: 
+# /usr/lpp/zpm/community/zosopen/git/2.41.0.0
+LABEL community_unsupported=true
+# The label depicts whether the OCI artifact is compatible with the current version of IBM z/OS Package Manager.
+# The supported format is major.minor.patch where each are positive numerics (symantic version style)
+LABEL specification=2.0.0
+LABEL summary="Git on z/OS"
+LABEL description="Git is a popular version control system that is widely used in the open source community"
+
+# Copying the z/OS product PAX file from local file system to OCI artifact layer
+# Including this dummy pax.Z for illustration purpose.
+COPY dummy-zopen-git.zos.pax.Z dummy-zopen-git.zos.pax.Z
+
+# Copying zpm directory from local file system to OCI artifact layer (.zpm)
+# Must include the zpm directory which contains an preinstall.sh, install.sh, uninstall.sh scripts.
+# Include pre-install script to check for suitability of system
+# Include an install script to configure the system
+# Include a remove script to delete the compiler datasets
+COPY zpm .zpm
+
+# Copying an install_test.sh file from local file system to OCI artifact layer
+# Include install_test script to verify the product install is sucessfull or not
+COPY install_test.sh install_test.sh
