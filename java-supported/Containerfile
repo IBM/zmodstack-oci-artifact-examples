@@ -1,0 +1,37 @@
+FROM scratch
+
+# Name of the OCI artifact.
+LABEL name=java-sdk
+# This label is used to identify the product owner. 
+# Product installation directory is decided based on this value(<product direcotry>/<vendor>/<image-name>/<image-tag>).
+LABEL vendor=IBM
+# This label depicts the product version in the OCI artifact.
+# The supported format is version.release.mod.fix where each are positive numerics.
+LABEL version="8.0.64.0"
+# This label is used to identify the specific build for this OCI artifact.
+LABEL release=0.1
+# This label is used to identify whether the software is licensed with supported or licensed with unsupported.
+# Example:
+#   If vendor=IBM, OCI artifact tag is javasdk:1.0.8.0, and community_unsupported=false, then installation directory will be: 
+# /usr/lpp/zpm/ibm/javasdk/1.0.8.0
+LABEL community_unsupported=false
+# The label depicts whether the OCI artifact is compatible with the current version of IBM z/OS Package Manager.
+# The supported format is major.minor.patch where each are positive numerics (symantic version style).
+LABEL specification=2.0.0
+LABEL summary="Java SDK on z/OS"
+LABEL description="Example of packaging Java SDK in an OCI artifact"
+
+# Copying the z/OS product PAX file from local file system to OCI artifact layer.
+# Including this dummy pax.Z for illustration purpose.
+COPY dummy-IBM-java-sdk-8.0.64.0.zos.pax.Z dummy-IBM-java-sdk-8.0.64.0.zos.pax.Z
+
+# Copying zpm directory from local file system to OCI artifact layer (.zpm)
+# Must include the zpm directory which contains an preinstall.sh, install.sh, uninstall.sh scripts.
+# Include pre-install script to check for suitability of system.
+# Include an install script to configure the system.
+# Include a remove script to delete the compiler datasets.
+COPY zpm .zpm
+
+# Copying an install_test.sh file from local file system to OCI artifact layer.
+# Include install_test script to verify the product install.
+COPY install_test.sh install_test.sh
